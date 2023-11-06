@@ -1,21 +1,23 @@
 
 import { Inter } from 'next/font/google'
-import ThreeScene from 'react/components/ThreeScene';
+
+import ThreeScene from '@/components/ThreeScene'
+
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
-    <>
-     <style jsx>{`
-        main {
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-        }
-      `}</style>
+    <> <div className=''></div>
+      <div className='flex ibg-tems-center items justify-center '>
+       <input className=' py-8 text-center text-black '></input>
+     
+        <input className=' py-8 text-center text-black'></input>
+      </div>
+      
+      <ThreeScene></ThreeScene>
+      
+    
 
     
     </>
