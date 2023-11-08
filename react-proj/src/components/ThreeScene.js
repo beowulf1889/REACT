@@ -1,9 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import React, { useEffect, useRef } from 'react';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-
-
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const ThreeScene = () => {
   const canvasRef = useRef();
@@ -15,30 +13,26 @@ const ThreeScene = () => {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 5; // Adjust the camera position as needed
-    
+    camera.position.z = 5;
+
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableZoom = true; // Enable zooming
-    controls.enablePan = true; // Enable panning
+    controls.enableZoom = true;
+    controls.enablePan = true;
 
-   
+    // Create a background texture
+    const textureLoader = new THREE.TextureLoader();
+    const backgroundTexture = textureLoader.load('');
+    scene.background = backgroundTexture;
 
-    
-      const gltfLoader = new GLTFLoader();
-      const url = 'src/components/buster_drone/scene.gltf';
-
-
-      gltfLoader.load(url, (gltf) => {
-        const root = gltf.scene;
-        scene.add(root);
-        
-      });
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
 
     const animate = () => {
       requestAnimationFrame(animate);
-
-      
-
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
       renderer.render(scene, camera);
     };
 
