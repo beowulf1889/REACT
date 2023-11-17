@@ -19,7 +19,11 @@ export default function Home() {
     
     <ThreeScene></ThreeScene>
     
-  
+      {function render() {
+    const delta = clock.getDelta();
+    controls.update(delta);
+    renderer.render(scene, camera);
+  }}
     
       
 

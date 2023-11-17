@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import React, { useEffect, useRef } from 'react';
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+import { Scene } from 'three';
 
 const ThreeScene = () => {
   const containerRef = useRef();
@@ -27,14 +28,27 @@ const ThreeScene = () => {
     // Scene
     scene = new THREE.Scene();
     scene.background = new THREE.Color().setHSL(0.51, 0.4, 0.01);
-    scene.fog = new THREE.Fog(scene.background, 3500, 15000);
+    scene.fog = new THREE.Fog(scene.background, 4000, 15000);
 
     // Geometry and Material
+    const geometry1 = new THREE.BoxGeometry(1000,1000,1000)
+    const material1 = new THREE.MeshBasicMaterial({ color: 0xc40233, specular: 0xffffff, metalness: 0.9 });
+
+    const cube1 = new THREE.Mesh(geometry1, material1);
+
+    scene.add(cube1);
+    
+    
+    
+    
     const s = 250;
-    const geometry = new THREE.TorusKnotGeometry(s, s, s);
+    const geometry = new THREE.BoxGeometry(30, 30, 30);
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff, specular: 0xffffff, metalness: 0.9 });
 
     // Objects in the scene
+    
+    
+    
     for (let i = 0; i < 3000; i++) {
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(
@@ -53,7 +67,7 @@ const ThreeScene = () => {
     }
 
     // Lights
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    const dirLight = new THREE.DirectionalLight(0xb22222, 0.5);
     dirLight.position.set(0, -1, 0).normalize();
     dirLight.color.setHSL(0.3, 0.7, 0.5);
     scene.add(dirLight);
