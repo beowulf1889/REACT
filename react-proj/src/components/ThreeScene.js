@@ -1,80 +1,108 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import React, { useEffect, useRef } from 'react';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 const ThreeScene = () => {
-  const canvasRef = useRef();
+  const containerRef = useRef();
+  let camera, scene, renderer, controls, stats;
+
+  const clock = new THREE.Clock();
 
   useEffect(() => {
-   
-    
-    const canvas = canvasRef.current;
-    const renderer = new THREE.WebGLRenderer({ canvas });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
+    const container = containerRef.current;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 5;
+    // Renderer
+    const width = container.clientWidth;
+    const height = container.clientHeight;
 
-    // First directional light
-const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight1.position.set(0, 1, 0);
-directionalLight1.castShadow = true;
-scene.add(directionalLight1);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    container.appendChild(renderer.domElement);
 
-// Second directional light
-const directionalLight2 = new THREE.DirectionalLight(0xff0000, 1); // Red color, lower intensity
-directionalLight2.position.set(1, 0, 0); // Different position
-directionalLight2.castShadow = true;
-scene.add(directionalLight2);
+    // Camera
+    camera = new THREE.PerspectiveCamera(40, width / height, 1, 15000);
+    camera.position.z = 250;
 
+    // Scene
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color().setHSL(0.51, 0.4, 0.01);
+    scene.fog = new THREE.Fog(scene.background, 3500, 15000);
 
-const directionalLight3 = new THREE.DirectionalLight(0xff0000, 1); // Red color, lower intensity
-directionalLight2.position.set(0, 0, 1); // Different position
-directionalLight2.castShadow = true;
-scene.add(directionalLight3);
+    // Geometry and Material
+    const s = 250;
+    const geometry = new THREE.TorusKnotGeometry(s, s, s);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffffff, specular: 0xffffff, metalness: 0.9 });
 
-  
+    // Objects in the scene
+    for (let i = 0; i < 3000; i++) {
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(
+        8000 * (2.0 * Math.random() - 1.0),
+        8000 * (2.0 * Math.random() - 1.0),
+        8000 * (2.0 * Math.random() - 1.0)
+      );
+      mesh.rotation.set(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      );
+      mesh.matrixAutoUpdate = false;
+      mesh.updateMatrix();
+      scene.add(mesh);
+    }
 
+    // Lights
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    dirLight.position.set(0, -1, 0).normalize();
+    dirLight.color.setHSL(0.3, 0.7, 0.5);
+    scene.add(dirLight);
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableZoom = true;
-    controls.enablePan = true;
+    // Controls
+    controls = new FlyControls(camera, renderer.domElement);
+    controls.movementSpeed = 2500;
+    controls.domElement = container;
+    controls.rollSpeed = Math.PI / 6;
+    controls.autoForward = false;
+    controls.dragToLook = true;
 
-    // Create a background texture
-    const textureLoader = new THREE.TextureLoader();
-    const backgroundTexture = textureLoader.load('');
-    scene.background = backgroundTexture;
+    // Stats
+    stats = new Stats();
+    container.appendChild(stats.dom);
 
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshStandardMaterial({    color: 0xff0000, // Red color
-    roughness: 0.5,
-    metalness: 0.5,});
-    
-    const cube = new THREE.Mesh(geometry, material);
-    cube.castShadow = true; // Enable shadow casting for the cube
-    scene.add(cube);
-
-    
-    const animate = () => {
-      requestAnimationFrame(animate);
-      
-      cube.lookAt(camera.position)
-     
-      
-      renderer.render(scene, camera);
-      
-    };
+    window.addEventListener('resize', onWindowResize);
 
     animate();
 
-    
-
+    return () => {
+      // Clean up code if necessary
+    };
   }, []);
 
-  return <canvas ref={canvasRef} />;
+  function onWindowResize() {
+    const container = containerRef.current;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    renderer.setSize(width, height);
+
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    render();
+    stats.update();
+  }
+
+  function render() {
+    const delta = clock.getDelta();
+    controls.update(delta);
+    renderer.render(scene, camera);
+  }
+
+  return <div ref={containerRef} style={{ width: '100%', height: '100%' }}></div>;
 };
 
 export default ThreeScene;

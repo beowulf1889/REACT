@@ -9,26 +9,28 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
-    
+   
     <>    
    
-    
+   <ThreeScene></ThreeScene>
+
     
     <div className='h-screen w-screen flex object-contain justify-center static'>
     
-    
+    <ThreeScene></ThreeScene>
     
   
-    <div className=' flex z-40 absolute   '>
-      <ThreeScene></ThreeScene>
+    
+      
+
       </div>
+    
         
-    </div>
+    
 
     
 
    
-     
     </>
 
     
